@@ -1,0 +1,36 @@
+%% Seconde proposition HCII 2027 (EPCE), version LaTeX de proposition-hcii2027.md pour Overleaf.
+%% Le texte a coller dans le CMS est celui-ci, sans les commandes : 800 mots au plus, intitules compris.
+%% Chiffres relus par verifier_chiffres.py, qui verifie aussi que ce fichier porte le MEME texte que le .md.
+%% Aucun tiret cadratin.
+\documentclass[11pt]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+\title{A Pilot That Learns and a Twin That Watches: Testing a Cognitive Pilot Model Against Pilots It Has Never Seen}
+\author{Daril Kengne Wambo \and Vanessa Mankejeu Ngolong \and Roger Nkambou\\[4pt]
+\small Centre de recherche en intelligence artificielle (CRIA), Universit\'e du Qu\'ebec \`a Montr\'eal}
+\date{Proposal for HCI International 2027, EPCE (Engineering Psychology and Cognitive Ergonomics)\\ \small submitted through cms.hci.international/2027 before 9 October 2026}
+
+\begin{document}
+\maketitle
+
+\textbf{Keywords.} cognitive digital twin; ACT-R; skill acquisition; production compilation; pilot modelling; pre-registration; activity recognition; flight simulation
+
+\section*{Objective and Significance}
+A digital twin of a pilot would show a training organisation how a trainee is learning a procedure, and let a designer try a cockpit change on many trainees before recruiting a crew. The twin must then do two things a procedural agent usually does not: improve with practice the way people do, and follow a real pilot's flight closely enough to say which step the pilot is on. VC-PILOT flies an Airbus A330 in X-Plane 12 from procedures held as declarative knowledge in an ACT-R model, drawn from a procedure ontology, so every decision traces to a written task. We built both on this one model and ask: does the skill it acquires match pilots it was never tuned on, and can the same knowledge, run in reverse, watch a pilot fly?
+
+\section*{Methods/Approach}
+Learning uses two standard ACT-R mechanisms. Production compilation fuses the generic rules that re-read the procedure step by step into task-specific rules nobody wrote, kept across flights for each modelled pilot; utility learning, driven by a reward at the end of each task, decides when a compiled rule wins over the rule it came from. The human reference is a corpus of 129 take-offs by twelve pilots of three experience levels, novices to type-rated airline pilots, in a fixed-base A320 simulator. Six pilots served for calibration. The other six were held out, and a protocol frozen before any flight (measures, equivalence margins, 99 percent Bonferroni intervals over a family of ten tests, a bootstrap by pilot, exclusion rules) compared them with six fresh modelled pilots flying ten take-offs each: 60 flights, none excluded. The twin, the mirror, runs the same procedure read-only: it writes nothing to the simulator, matches each action the ontology predicts against the recorded or live aircraft state, and logs the task, its time, and whether it came early, late or not at all. We tested it offline on the 129 human take-offs, and live on our own agent, whose action times are known.
+
+\section*{Results/Findings}
+In development, one modelled pilot reproduced the shape of the human learning curve: liftoff to gear up fell from 6.7 s on its first flight to 3.8 s on its second, once its compiled rules were reloaded, then stayed near 3.6 s; the pilots go from 15.1 to 5.7 and then 3.3 s. The frozen test did not confirm it. On the first flight the agent was close to the held-out pilots (16.1 s against 15.1 s), but it then stopped improving, at 11.6 s on flights 2 to 7 and 11.5 s on flights 8 to 10, where the pilots reached 6.1 s and 3.1 s. The pre-registered test of this delay fails, and its cause, among documented differences between the development and frozen configurations, is not established. The procedure itself held: thrust reduction before the first flap setting passed its equivalence test, and the agent's median rotation speed and peak pitch fell within the held-out pilots' interquartile range. Its rotation was faster than theirs (3.6 against 2.9 degrees per second), though its mean rate is within the manufacturer's guidance. Omissions were too rare on a nominal take-off to decide with six pilots a side (agent: gear 2 of 60 flights, thrust reduction 3 of 60; pilots: 0 of 48 and 1 of 40). Offline, the mirror recognised the take-off thrust, rotation and gear-up actions in 128 to 129 of the 129 human take-offs, matching an independent extraction to within 0.2 s wherever both saw the event. It also found that in 101 of 103 take-offs the pilots raised the gear before reducing thrust, the reverse of our written procedure, a discrepancy we corrected before the frozen test. Live, it saw 9 of 10 actions, the tenth already in place, missed none, and lagged by a median of 0.66 s, mostly lever travel. It has not yet watched a human pilot.
+
+\section*{Contributions and Implications}
+First, a learning cognitive pilot whose acquired skill is inspectable: each compiled rule names the tasks it joins. Second, a pre-registered test of a pilot model on held-out pilots, with its failure reported: a match obtained during development did not survive freezing, which is what an evaluation of digital human models should be designed to catch. Third, a twin that reads a pilot's flight through the same knowledge the agent flies with, so a deviation is reported against a named step of the procedure rather than as an anomaly score. For engineering psychology, a pilot model must be judged on people it has never seen, and on the shape of its learning, not only on its first flight. The full paper will add the mirror watching human pilots live and comparing each action with the model's expectation, the step that turns observation into a measure of a pilot's progress.
+
+\end{document}
