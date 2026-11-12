@@ -49,8 +49,9 @@ all 1,686 actions after one correction. In an exploratory evaluation where each 
 pairs, the twin beat the pilot's own record for 11 of 12 pilots. Against baselines learned from the data its standing depends on how
 late actions are scored: among actions that came within twenty seconds it had the lowest error (1.53\,s), but its edge, 0.15 to 0.24\,s
 per pilot, is not established on twelve pilots, and when late actions are counted at the window's edge a learned baseline does better.
-Removing ACT-R's cognitive latencies left the predictions unchanged overall. The twin's edge was largest for actions cued by the
-aircraft's state. A frozen test of the model's learning failed. The timing of take-off thrust proved personal (intraclass correlations
+Removing ACT-R's cognitive latencies left the predictions unchanged overall, yet the procedure the model plays ahead carries information
+the data alone do not: given the model's raw forecast, the learned baseline improved for 10 of 12 pilots. The twin's edge was largest for
+actions cued by the aircraft's state. A frozen test of the model's learning failed. The timing of take-off thrust proved personal (intraclass correlations
 of 0.69 to 0.88 once expertise and practice are accounted for), the response to a failure did not.
 
 \keywords{Cognitive digital twin \and ACT-R \and Pilot modelling \and Individual differences \and Pre-registration \and Flight simulation}
@@ -130,12 +131,11 @@ and for pilots' responses to air traffic control~\cite{wustenbecker_response_tim
 baselines.
 
 \paragraph{Skill and state.} Production compilation turns declarative instructions into fast task-specific rules~\cite{taatgen_lee_2003}
-and accounts for how people learn to operate a flight management system from instructions~\cite{taatgen_robust_2008}; threaded cognition explains how concurrent
-tasks share the same resources~\cite{salvucci_threaded_2008}. Neuroadaptive and assistance
-systems infer the pilot's mental state from physiology and behaviour~\cite{klaproth_neuroadaptive_2020,russwinkel_cognitive_assistance_2020},
-in the line of work on situation awareness~\cite{endsley_toward_sa_theory_1995} and workload~\cite{hart_nasa-task_load_2006,wickens_engineering_2021},
-and ACT-R models have represented the effect of fatigue~\cite{gunzelmann_sleep_deprivation_2009}. We test whether such a state improves the
-twin's predictions; it does not.
+and accounts for how people learn to operate a flight management system from instructions~\cite{taatgen_robust_2008}; threaded
+cognition explains how concurrent tasks share the same resources~\cite{salvucci_threaded_2008}. Neuroadaptive and assistance systems
+infer the pilot's mental state from physiology and behaviour~\cite{klaproth_neuroadaptive_2020,russwinkel_cognitive_assistance_2020},
+and ACT-R models have represented the effect of fatigue~\cite{gunzelmann_sleep_deprivation_2009}. We test whether such a state improves
+the twin's predictions; it does not.
 
 \paragraph{Individuals and populations.} Predicting an individual from few observations is a classic problem of empirical Bayes: an
 individual estimate is shrunk toward the population in proportion to how much individuals actually differ~\cite{efron_morris_1975}.
@@ -357,6 +357,9 @@ Twin beats a baseline that models practice & cross-val. & 8 of 12; $+0.42$\,s; $
 Cognitive latencies improve the model & cross-val. & 8 of 12; $+0.004$\,s; $p = 0.46$ & FAIL \\
 Twin beats the analogues' own actions & cross-val. & 8 of 12; $+0.12$\,s; $p = 0.06$, 0.18 after Holm & FAIL \\
 Twin beats the event baseline & cross-val. & 9 of 12; $+0.15$\,s; $p = 0.12$, 0.25 after Holm & FAIL \\
+\multicolumn{4}{@{}l}{\emph{The model's forecast given to the learned baseline; 20\,s; Holm over two scores}} \\
+Improves it, actions within the window & cross-val. & 10 of 12; $+0.14$\,s; $p = 0.017$, 0.034 after Holm & PASS \\
+Improves it, late actions counted & cross-val. & 8 of 12; $+0.05$\,s; $p = 0.056$ & FAIL \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Flagging a missing action}} \\
 80\,\% intervals contain the action (70 to 90\,\%) & first run & 70.4\,\%; 63.9\,\% for actions 10 to 20\,s ahead & PASS \\
@@ -399,13 +402,11 @@ procedure against the flights.
 \subsection{Predicting the next action}
 
 When the mirror's model reaches a task, the pilot's own offset predicts the action better than the generic model for all twelve pilots,
-with a median error of 1.16\,s against 3.76\,s over 765 actions. Against the other pilots' offset it first won for only half of the
-pilots, then for each of the six validation pilots once the weight $K$ of Eq.~\ref{eq:shrink} was set on the calibration pilots (1.16
-against 1.45\,s over all twelve). The look-ahead, first judged blind on 8~November~2026 on the held-out pilots, was closer than the
-reference $B$ for five of six pilots at both horizons (1.64 against 2.24\,s at 10\,s, 1.85 against 2.57\,s at 20\,s). It predicted fewer
-of the pilots' actions than $B$ (0.88 against 0.94 of them at 10\,s), did no better than $B$ after a failure assumed in advance, and it
-was too slow for live use; only the last defect was corrected. The version evaluated next is the one in service, which blends the model
-with the reference, feeds it the pilot's estimated cognitive state, and corrects the time base.
+with a median error of 1.16\,s against 3.76\,s over 765 actions; against the other pilots' offset it won only once $K$ was set on the
+calibration pilots (Table~\ref{tab:criteria}). The look-ahead, first judged blind on the held-out pilots, was closer than the reference
+$B$ for five of six pilots (1.64 against 2.24\,s at 10\,s, 1.85 against 2.57\,s at 20\,s), but predicted fewer of their actions (0.88
+against 0.94 at 10\,s), did no better after a failure assumed in advance, and it was too slow for live use; only the last defect was
+corrected. The version evaluated next blends the model with $B$, feeds it the estimated cognitive state, and corrects the time base.
 
 \subsection{The twin against the pilot's own record and against data}
 \label{sec:own}
@@ -441,6 +442,8 @@ Model alone without cognitive latencies & 1.48 & 1.64 & \\
 Analogue baseline & 1.36 & 1.65 & $+0.12$\,s, 8 of 12 \\
 Event baseline & 1.37 & 1.76 & $+0.15$\,s, 9 of 12 \\
 Learned baseline & 1.45 & 1.82 & $+0.24$\,s, 9 of 12 \\
+Learned baseline with the model's forecast & 1.31 & 1.61 & $+0.10$\,s, 7 of 12 \\
+Twin deferring on pilot-paced actions (exploratory) & 1.12 & 1.33 & $-0.18$\,s, 2 of 12 \\
 Practice-aware baseline & 1.54 & 2.04 & $+0.42$\,s, 8 of 12 \\
 Pilot's own record & 1.60 & 2.29 & $+0.73$\,s, 11 of 12 \\
 \bottomrule
@@ -454,7 +457,8 @@ prediction bounded, the twin's advantage over the event baseline shrank from 0.3
 with an interval excluding zero to 9 of 12 with a mean per-pilot gain of 0.15\,s that the permutation test does not distinguish from
 chance ($p = 0.12$).
 
-On these actions the twin had the lowest pooled error at both horizons, tied with its latency-free copy (Table~\ref{tab:predictors}).
+On these actions, of the predictors declared first, the twin had the lowest pooled error at both horizons, tied with its latency-free
+copy (Table~\ref{tab:predictors}).
 It beat the pilot's own record for 11 of 12 pilots at 20\,s, by 0.73\,s on average (95\,\% interval 0.37 to 1.09; $p = 0.001$), and for
 all six validation pilots. Of the five comparisons we had declared, only the one against the practice-aware baseline survives Holm's
 correction ($p = 0.045$), and that baseline did worse than the event baseline it builds on, so beating it says little. The learned
@@ -470,6 +474,15 @@ this plain. Trained only on actions that came within twenty seconds, as the twin
 action counts, those that came later being scored at the window's edge, the learned baseline has the lowest mean error at 20\,s
 (1.08\,s), ahead of the event baseline (1.19\,s) and the twin (1.24\,s), which still beats the pilot's own record (1.45\,s, 10 of 12):
 the twin tends to expect actions earlier than they come.
+
+Does the model's forecast then carry anything a learned predictor lacks? As declared in advance, we gave the learned baseline one more
+input, the model's raw forecast: the instant the ACT-R copy is ready, without any learned offset. It improved for 10 of 12 pilots, from
+1.82 to 1.61\,s at 20\,s (per pilot $+0.14$\,s, $p = 0.017$, 0.034 after correction over the two scores); with late actions counted the
+gain was smaller and not established ($p = 0.056$), but the combination then had the lowest mean error of all (1.03\,s). The procedure
+played ahead thus carries information the data alone do not. Last, a twin that defers to the event baseline for actions without a
+constraint on the aircraft's state, a rule taken from the ontology but suggested by Table~\ref{tab:tasks}, had the lowest error on the
+actions within the window (1.33\,s), closer than the twin for 10 of 12 pilots and than the event baseline for 11; with late actions
+counted it tied the event baseline. We report it as a hypothesis for the prospective study, not as a result.
 
 The comparison with the twin stripped of its cognitive latencies is the most informative. It predicted exactly as well (1.533 against
 1.532\,s); for the model alone, the per-pilot difference was $+0.004$\,s ($-0.09$ to 0.10). Removing the latencies made the model ready
@@ -575,10 +588,11 @@ crew in flight could not.
 \paragraph{What predicts a pilot's next action.} We expected the cognitive model to carry the twin's advantage. It does not. The same
 procedure played ahead without retrieval, perceptual or production time predicts as well; the analogue baseline, which knows nothing of
 the procedure, comes within a tenth of a second; and a learned predictor does as well or better, depending on how late actions are
-scored. The twin's own contribution is narrower. For actions cued by the aircraft's state, the procedure says which condition the action
-waits for and the extrapolated trajectory says when it will be met, and there the twin predicts better than every baseline. Where the
-pilot sets the pace, as for take-off thrust, a personal delay from the last event does better; we will fix a combination of the two
-before the confirmatory study rather than adopt it after seeing these data. ACT-R remains the engine for another reason: the same
+scored. The procedure itself is another matter: given the model's forecast, a learned predictor improves, so the knowledge the agent
+flies with carries information the data alone do not. For actions cued by the aircraft's state, the procedure says which condition the
+action waits for and the extrapolated trajectory says when it will be met, and there the twin predicts better than every baseline.
+Where the pilot sets the pace, as for take-off thrust, a personal delay from the last event does better; the twin that combines the two
+did best of all, and we will register it for the confirmatory study rather than adopt it after seeing these data. ACT-R remains the engine for another reason: the same
 knowledge flies the aircraft, reads the flight and predicts it, and every prediction stays inspectable. The twin can say which task it
 expects, which constraint it waits for and from which action it counts.
 
@@ -616,9 +630,11 @@ statistics.
 
 \paragraph{Next.} The decisive test is prospective: new pilots, each flying twelve take-offs with failures. We have frozen the twin it
 will test and three criteria: that the twin beats each pilot's own record, that it beats the event baseline at 20\,s, and that the timing
-of take-off thrust, but not the response to a failure, is personal. Before its first flight we plan to add the learned and analogue
-baselines, the choice of pairs and the scoring rules used here, a single primary test with a power analysis, and an instructor's
-annotation of a sample of flights.
+of take-off thrust, but not the response to a failure, is personal. Resampling the per-pilot differences observed here, a permutation
+test of the twin against the event baseline would have 32\,\% power with twelve new pilots and 82\,\% with 48, whereas the learned
+predictor with the model's forecast against the learned baseline, and the combined twin against the event baseline, reach 95\,\% with
+24. Before the first flight we plan to register these two comparisons, the choice of pairs and scoring rules used here, and an
+instructor's annotation of a sample of flights.
 
 %% ====================================================================================================
 \section{Conclusion}
@@ -626,7 +642,8 @@ annotation of a sample of flights.
 The same declarative knowledge that lets an ACT-R pilot fly a procedure lets it read a pilot's flight against that procedure and
 anticipate the pilot's next actions. On twelve pilots, each predicted without being learned from, the twin beats the pilot's own record;
 against baselines learned from the data it is close, ahead or behind depending on how late actions are scored, and its cognitive timing
-adds nothing measurable. It helps most for actions cued by the aircraft's state. The timing of take-off thrust is personal; the response
+adds nothing measurable. Yet the procedure it plays ahead improves a learned predictor, and it helps most for actions cued by the
+aircraft's state. The timing of take-off thrust is personal; the response
 to a failure is not. We kept the failures in view: a learning plateau, alerts that miss the actions that matter most, a cognitive state
 that does not help, and an advantage we first overstated. A confirmatory study with new pilots will tell which findings hold.
 
